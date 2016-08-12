@@ -5,7 +5,7 @@
 
     internal class Game
     {
-        private int[,] map = new int[4, 4];
+        private int[,] board = new int[4, 4];
         private Dictionary<int, ConsoleColor> colorInt = new Dictionary<int, ConsoleColor>();
         private Random rnd = new Random();
 
@@ -26,98 +26,91 @@
 
             this.AddRandom();
             this.AddRandom();
+            this.ConsoleUpdate();
         }
+        private enum Direction { Up, Down, Left, Right };
 
-        public void Up()
+        private void Move(Direction direction)
         {
-            for (int k = 0; k <= 4; k++)
+            for (int k = 0; k < 4; k++)
             {
-                for (int i = 3; i > 0; i--)
+                if (direction == Direction.Up)
                 {
-                    for (int j = 0; j < 4; j++)
+                    for (int i = 3; i > 0; i--)
                     {
-                        if (this.map[i - 1, j] == this.map[i, j])
+                        for (int j = 0; j < 4; j++)
                         {
-                            this.map[i - 1, j] = this.map[i - 1, j] * 2;
-                            this.map[i, j] = 0;
-                        }
+                            if (this.board[i - 1, j] == this.board[i, j] && k == 0)
+                            {
+                                this.board[i - 1, j] = this.board[i - 1, j] * 2;
+                                this.board[i, j] = 0;
+                            }
 
-                        if (this.map[i - 1, j] == 0)
-                        {
-                            this.map[i - 1, j] = this.map[i, j];
-                            this.map[i, j] = 0;
+                            if (this.board[i - 1, j] == 0)
+                            {
+                                this.board[i - 1, j] = this.board[i, j];
+                                this.board[i, j] = 0;
+                            }
                         }
                     }
                 }
-            }
-        }
-
-        public void Down()
-        {
-            for (int k = 0; k <= 4; k++)
-            {
-                for (int i = 0; i < 3; i++)
+                else if (direction == Direction.Down)
                 {
-                    for (int j = 0; j < 4; j++)
+                    for (int i = 0; i < 3; i++)
                     {
-                        if (this.map[i + 1, j] == this.map[i, j])
+                        for (int j = 0; j < 4; j++)
                         {
-                            this.map[i + 1, j] = this.map[i + 1, j] * 2;
-                            this.map[i, j] = 0;
-                        }
+                            if (this.board[i + 1, j] == this.board[i, j] && k == 0)
+                            {
+                                this.board[i + 1, j] = this.board[i + 1, j] * 2;
+                                this.board[i, j] = 0;
+                            }
 
-                        if (this.map[i + 1, j] == 0)
-                        {
-                            this.map[i + 1, j] = this.map[i, j];
-                            this.map[i, j] = 0;
+                            if (this.board[i + 1, j] == 0)
+                            {
+                                this.board[i + 1, j] = this.board[i, j];
+                                this.board[i, j] = 0;
+                            }
                         }
                     }
                 }
-            }
-        }
-
-        public void Left()
-        {
-            for (int k = 0; k <= 4; k++)
-            {
-                for (int j = 3; j > 0; j--)
+                else if (direction == Direction.Left)
                 {
-                    for (int i = 0; i < 4; i++)
+                    for (int j = 3; j > 0; j--)
                     {
-                        if (this.map[i, j - 1] == this.map[i, j])
+                        for (int i = 0; i < 4; i++)
                         {
-                            this.map[i, j - 1] = this.map[i, j - 1] * 2;
-                            this.map[i, j] = 0;
-                        }
+                            if (this.board[i, j - 1] == this.board[i, j] && k == 0)
+                            {
+                                this.board[i, j - 1] = this.board[i, j - 1] * 2;
+                                this.board[i, j] = 0;
+                            }
 
-                        if (this.map[i, j - 1] == 0)
-                        {
-                            this.map[i, j - 1] = this.map[i, j];
-                            this.map[i, j] = 0;
+                            if (this.board[i, j - 1] == 0)
+                            {
+                                this.board[i, j - 1] = this.board[i, j];
+                                this.board[i, j] = 0;
+                            }
                         }
                     }
                 }
-            }
-        }
-
-        public void Right()
-        {
-            for (int k = 0; k <= 4; k++)
-            {
-                for (int j = 0; j < 3; j++)
+                else if (direction == Direction.Right)
                 {
-                    for (int i = 0; i < 4; i++)
+                    for (int j = 0; j < 3; j++)
                     {
-                        if (this.map[i, j + 1] == this.map[i, j])
+                        for (int i = 0; i < 4; i++)
                         {
-                            this.map[i, j + 1] = this.map[i, j + 1] * 2;
-                            this.map[i, j] = 0;
-                        }
+                            if (this.board[i, j + 1] == this.board[i, j] && k == 0)
+                            {
+                                this.board[i, j + 1] = this.board[i, j + 1] * 2;
+                                this.board[i, j] = 0;
+                            }
 
-                        if (this.map[i, j + 1] == 0)
-                        {
-                            this.map[i, j + 1] = this.map[i, j];
-                            this.map[i, j] = 0;
+                            if (this.board[i, j + 1] == 0)
+                            {
+                                this.board[i, j + 1] = this.board[i, j];
+                                this.board[i, j] = 0;
+                            }
                         }
                     }
                 }
@@ -130,19 +123,19 @@
             {
                 if (key == ConsoleKey.UpArrow)
                 {
-                    this.Up();
+                    this.Move(Direction.Up);
                 }
                 else if (key == ConsoleKey.DownArrow)
                 {
-                    this.Down();
+                    this.Move(Direction.Down);
                 }
                 else if (key == ConsoleKey.LeftArrow)
                 {
-                    this.Left();
+                    this.Move(Direction.Left);
                 }
                 else if (key == ConsoleKey.RightArrow)
                 {
-                    this.Right();
+                    this.Move(Direction.Right);
                 }
 
                 this.AddRandom();
@@ -150,43 +143,45 @@
             }
         }
 
-        public void AddRandom()
+        private void AddRandom()
         {
             int randCol, randRow;
             if (!this.CheckWin())
             {
-                if (this.CheckLoose())
+                if (this.CheckLose())
                 {
                     randCol = this.rnd.Next(0, 4);
                     randRow = this.rnd.Next(0, 4);
-                    while (this.map[randCol, randRow] != 0)
+                    while (this.board[randCol, randRow] != 0)
                     {
                         randCol = this.rnd.Next(0, 4);
                         randRow = this.rnd.Next(0, 4);
                     }
 
-                    this.map[randCol, randRow] = 2;
+                    this.board[randCol, randRow] = 2;
                 }
                 else
                 {
-                    Console.WriteLine("Loose.");
-                    this.map = new int[4, 4];
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Lose.");
+                    this.board = new int[4, 4];
                 }
             }
             else
             {
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Win.");
-                this.map = new int[4, 4];
+                this.board = new int[4, 4];
             }
         }
 
-        public bool CheckWin()
+        private bool CheckWin()
         {
             for (int i = 0; i < 4; i++)
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    if (this.map[i, j] == 2048)
+                    if (this.board[i, j] == 2048)
                     {
                         return true;
                     }
@@ -196,13 +191,13 @@
             return false;
         }
 
-        public bool CheckLoose()
+        private bool CheckLose()
         {
             for (int i = 0; i < 4; i++)
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    if (this.map[i, j] == 0)
+                    if (this.board[i, j] == 0)
                     {
                         return true;
                     }
@@ -218,8 +213,8 @@
             {
                 for (int j = 0; j != 4; j++)
                 {
-                    Console.ForegroundColor = this.colorInt[this.map[i, j]];
-                    Console.Write(" " + this.map[i, j]);
+                    Console.ForegroundColor = this.colorInt[this.board[i, j]];
+                    Console.Write(" " + this.board[i, j]);
                 }
 
                 Console.WriteLine();
