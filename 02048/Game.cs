@@ -5,6 +5,8 @@
 
     internal class Game
     {
+        private int winValue = 2048;
+        private int size = 4;
         private int[,] board = new int[4, 4];
         private Dictionary<int, ConsoleColor> colorInt = new Dictionary<int, ConsoleColor>();
         private Random rnd = new Random();
@@ -28,17 +30,20 @@
             this.AddRandom();
             this.ConsoleUpdate();
         }
-        private enum Direction { Up, Down, Left, Right };
+
+        private enum Direction {
+            Up, Down, Left, Right
+        };
 
         private void Move(Direction direction)
         {
-            for (int k = 0; k < 4; k++)
+            for (int k = 0; k < size; k++)
             {
                 if (direction == Direction.Up)
                 {
-                    for (int i = 3; i > 0; i--)
+                    for (int i = size-1; i > 0; i--)
                     {
-                        for (int j = 0; j < 4; j++)
+                        for (int j = 0; j < size; j++)
                         {
                             if (this.board[i - 1, j] == this.board[i, j] && k == 0)
                             {
@@ -56,9 +61,9 @@
                 }
                 else if (direction == Direction.Down)
                 {
-                    for (int i = 0; i < 3; i++)
+                    for (int i = 0; i < size - 1; i++)
                     {
-                        for (int j = 0; j < 4; j++)
+                        for (int j = 0; j < size; j++)
                         {
                             if (this.board[i + 1, j] == this.board[i, j] && k == 0)
                             {
@@ -76,9 +81,9 @@
                 }
                 else if (direction == Direction.Left)
                 {
-                    for (int j = 3; j > 0; j--)
+                    for (int j = size - 1; j > 0; j--)
                     {
-                        for (int i = 0; i < 4; i++)
+                        for (int i = 0; i < size; i++)
                         {
                             if (this.board[i, j - 1] == this.board[i, j] && k == 0)
                             {
@@ -96,9 +101,9 @@
                 }
                 else if (direction == Direction.Right)
                 {
-                    for (int j = 0; j < 3; j++)
+                    for (int j = 0; j < size - 1; j++)
                     {
-                        for (int i = 0; i < 4; i++)
+                        for (int i = 0; i < size; i++)
                         {
                             if (this.board[i, j + 1] == this.board[i, j] && k == 0)
                             {
@@ -150,12 +155,12 @@
             {
                 if (this.CheckLose())
                 {
-                    randCol = this.rnd.Next(0, 4);
-                    randRow = this.rnd.Next(0, 4);
+                    randCol = this.rnd.Next(0, size);
+                    randRow = this.rnd.Next(0, size);
                     while (this.board[randCol, randRow] != 0)
                     {
-                        randCol = this.rnd.Next(0, 4);
-                        randRow = this.rnd.Next(0, 4);
+                        randCol = this.rnd.Next(0, size);
+                        randRow = this.rnd.Next(0, size);
                     }
 
                     this.board[randCol, randRow] = 2;
@@ -164,24 +169,24 @@
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Lose.");
-                    this.board = new int[4, 4];
+                    this.board = new int[size, size];
                 }
             }
             else
             {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Win.");
-                this.board = new int[4, 4];
+                this.board = new int[size, size];
             }
         }
 
         private bool CheckWin()
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < size; i++)
             {
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < size; j++)
                 {
-                    if (this.board[i, j] == 2048)
+                    if (this.board[i, j] == winValue)
                     {
                         return true;
                     }
@@ -193,9 +198,9 @@
 
         private bool CheckLose()
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < size; i++)
             {
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < size; j++)
                 {
                     if (this.board[i, j] == 0)
                     {
@@ -209,9 +214,9 @@
 
         private void ConsoleUpdate()
         {
-            for (int i = 0; i != 4; i++)
+            for (int i = 0; i != size; i++)
             {
-                for (int j = 0; j != 4; j++)
+                for (int j = 0; j != size; j++)
                 {
                     Console.ForegroundColor = this.colorInt[this.board[i, j]];
                     Console.Write(" " + this.board[i, j]);
