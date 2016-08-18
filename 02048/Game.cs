@@ -2,12 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading;
 
     internal class Game
     {
         private int winValue = 2048;
         private int size = 4;
         private int[,] board = new int[4, 4];
+        private bool auto = false;
         private Dictionary<int, ConsoleColor> colorInt = new Dictionary<int, ConsoleColor>();
         private Random rnd = new Random();
 
@@ -15,23 +17,38 @@
         {
             this.colorInt.Add(0, ConsoleColor.White);
             this.colorInt.Add(2, ConsoleColor.Blue);
-            this.colorInt.Add(4, ConsoleColor.DarkBlue);
-            this.colorInt.Add(8, ConsoleColor.DarkCyan);
-            this.colorInt.Add(16, ConsoleColor.Gray);
-            this.colorInt.Add(32, ConsoleColor.DarkGray);
-            this.colorInt.Add(64, ConsoleColor.DarkGreen);
-            this.colorInt.Add(128, ConsoleColor.Green);
-            this.colorInt.Add(256, ConsoleColor.Yellow);
-            this.colorInt.Add(512, ConsoleColor.Magenta);
-            this.colorInt.Add(1024, ConsoleColor.White);
-            this.colorInt.Add(2048, ConsoleColor.Red);
+            this.colorInt.Add(4, ConsoleColor.Cyan);
+            this.colorInt.Add(8, ConsoleColor.Green);
+            this.colorInt.Add(16, ConsoleColor.Magenta);
+            this.colorInt.Add(32, ConsoleColor.Red);
+            this.colorInt.Add(64, ConsoleColor.Yellow);
+            this.colorInt.Add(128, ConsoleColor.White);
+            this.colorInt.Add(256, ConsoleColor.Blue);
+            this.colorInt.Add(512, ConsoleColor.Cyan);
+            this.colorInt.Add(1024, ConsoleColor.Green);
+            this.colorInt.Add(2048, ConsoleColor.Magenta);
 
             this.AddRandom();
             this.AddRandom();
             this.ConsoleUpdate();
+
+            Thread threadAuto = new Thread(() =>
+            {
+                while (true)
+                {
+                    Thread.Sleep(5000);
+                    if (this.auto == true)
+                    {
+                        this.AutoPlay();
+                    }
+                }
+            });
+
+            threadAuto.Start();
         }
 
-        private enum Direction {
+        private enum Direction
+        {
             Up, Down, Left, Right
         };
 
@@ -41,7 +58,7 @@
             {
                 if (direction == Direction.Up)
                 {
-                    for (int i = size-1; i > 0; i--)
+                    for (int i = size - 1; i > 0; i--)
                     {
                         for (int j = 0; j < size; j++)
                         {
@@ -126,26 +143,40 @@
         {
             if (key == ConsoleKey.UpArrow || key == ConsoleKey.DownArrow || key == ConsoleKey.LeftArrow || key == ConsoleKey.RightArrow)
             {
-                if (key == ConsoleKey.UpArrow)
+                switch (key)
                 {
-                    this.Move(Direction.Up);
-                }
-                else if (key == ConsoleKey.DownArrow)
-                {
-                    this.Move(Direction.Down);
-                }
-                else if (key == ConsoleKey.LeftArrow)
-                {
-                    this.Move(Direction.Left);
-                }
-                else if (key == ConsoleKey.RightArrow)
-                {
-                    this.Move(Direction.Right);
+                    case ConsoleKey.UpArrow:
+                        this.Move(Direction.Up);
+                        break;
+
+                    case ConsoleKey.DownArrow:
+                        this.Move(Direction.Down); ;
+                        break;
+
+                    case ConsoleKey.LeftArrow:
+                        this.Move(Direction.Left);
+                        break;
+
+                    case ConsoleKey.RightArrow:
+                        this.Move(Direction.Right); ;
+                        break;
                 }
 
                 this.AddRandom();
                 this.ConsoleUpdate();
             }
+            else if (key == ConsoleKey.Spacebar)
+            {
+                this.auto = !this.auto;
+            }
+        }
+
+        private void AutoPlay()
+        {
+            ;
+            IA IA = new IA(board);
+            ConsoleKey key = IA.returnBest();
+            UserInput(key);
         }
 
         private void AddRandom()
@@ -169,6 +200,7 @@
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Lose.");
+                    Console.ReadLine();
                     this.board = new int[size, size];
                 }
             }
@@ -176,6 +208,7 @@
             {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Win.");
+                Console.ReadLine();
                 this.board = new int[size, size];
             }
         }
@@ -214,18 +247,17 @@
 
         private void ConsoleUpdate()
         {
+            Console.Clear();
             for (int i = 0; i != size; i++)
             {
                 for (int j = 0; j != size; j++)
                 {
+                    Console.SetCursorPosition(j * 4, i * 2);
                     Console.ForegroundColor = this.colorInt[this.board[i, j]];
-                    Console.Write(" " + this.board[i, j]);
+                    Console.Write(this.board[i, j]);
+                    Console.WriteLine();
                 }
-
-                Console.WriteLine();
             }
-
-            Console.WriteLine();
         }
     }
 }
