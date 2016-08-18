@@ -6,40 +6,40 @@
 
     internal class Game
     {
-        private int winValue = 2048;
-        private int size = 4;
+        private readonly Dictionary<int, ConsoleColor> colorInt = new Dictionary<int, ConsoleColor>();
+        private readonly Random rnd = new Random();
+        private readonly int winValue = 2048;
+        private readonly int size = 4;
         private int[,] board = new int[4, 4];
-        private bool auto = false;
-        private Dictionary<int, ConsoleColor> colorInt = new Dictionary<int, ConsoleColor>();
-        private Random rnd = new Random();
+        private bool auto;
 
         public Game()
         {
-            this.colorInt.Add(0, ConsoleColor.White);
-            this.colorInt.Add(2, ConsoleColor.Blue);
-            this.colorInt.Add(4, ConsoleColor.Cyan);
-            this.colorInt.Add(8, ConsoleColor.Green);
-            this.colorInt.Add(16, ConsoleColor.Magenta);
-            this.colorInt.Add(32, ConsoleColor.Red);
-            this.colorInt.Add(64, ConsoleColor.Yellow);
-            this.colorInt.Add(128, ConsoleColor.White);
-            this.colorInt.Add(256, ConsoleColor.Blue);
-            this.colorInt.Add(512, ConsoleColor.Cyan);
-            this.colorInt.Add(1024, ConsoleColor.Green);
-            this.colorInt.Add(2048, ConsoleColor.Magenta);
+            colorInt.Add(0, ConsoleColor.White);
+            colorInt.Add(2, ConsoleColor.Blue);
+            colorInt.Add(4, ConsoleColor.Cyan);
+            colorInt.Add(8, ConsoleColor.Green);
+            colorInt.Add(16, ConsoleColor.Magenta);
+            colorInt.Add(32, ConsoleColor.Red);
+            colorInt.Add(64, ConsoleColor.Yellow);
+            colorInt.Add(128, ConsoleColor.White);
+            colorInt.Add(256, ConsoleColor.Blue);
+            colorInt.Add(512, ConsoleColor.Cyan);
+            colorInt.Add(1024, ConsoleColor.Green);
+            colorInt.Add(2048, ConsoleColor.Magenta);
 
-            this.AddRandom();
-            this.AddRandom();
-            this.ConsoleUpdate();
+            AddRandom();
+            AddRandom();
+            ConsoleUpdate();
 
-            Thread threadAuto = new Thread(() =>
+            var threadAuto = new Thread(() =>
             {
                 while (true)
                 {
-                    Thread.Sleep(5000);
-                    if (this.auto == true)
+                    if (auto)
                     {
-                        this.AutoPlay();
+                        Thread.Sleep(2000);
+                        AutoPlay();
                     }
                 }
             });
@@ -49,94 +49,10 @@
 
         private enum Direction
         {
-            Up, Down, Left, Right
-        };
-
-        private void Move(Direction direction)
-        {
-            for (int k = 0; k < size; k++)
-            {
-                if (direction == Direction.Up)
-                {
-                    for (int i = size - 1; i > 0; i--)
-                    {
-                        for (int j = 0; j < size; j++)
-                        {
-                            if (this.board[i - 1, j] == this.board[i, j] && k == 0)
-                            {
-                                this.board[i - 1, j] = this.board[i - 1, j] * 2;
-                                this.board[i, j] = 0;
-                            }
-
-                            if (this.board[i - 1, j] == 0)
-                            {
-                                this.board[i - 1, j] = this.board[i, j];
-                                this.board[i, j] = 0;
-                            }
-                        }
-                    }
-                }
-                else if (direction == Direction.Down)
-                {
-                    for (int i = 0; i < size - 1; i++)
-                    {
-                        for (int j = 0; j < size; j++)
-                        {
-                            if (this.board[i + 1, j] == this.board[i, j] && k == 0)
-                            {
-                                this.board[i + 1, j] = this.board[i + 1, j] * 2;
-                                this.board[i, j] = 0;
-                            }
-
-                            if (this.board[i + 1, j] == 0)
-                            {
-                                this.board[i + 1, j] = this.board[i, j];
-                                this.board[i, j] = 0;
-                            }
-                        }
-                    }
-                }
-                else if (direction == Direction.Left)
-                {
-                    for (int j = size - 1; j > 0; j--)
-                    {
-                        for (int i = 0; i < size; i++)
-                        {
-                            if (this.board[i, j - 1] == this.board[i, j] && k == 0)
-                            {
-                                this.board[i, j - 1] = this.board[i, j - 1] * 2;
-                                this.board[i, j] = 0;
-                            }
-
-                            if (this.board[i, j - 1] == 0)
-                            {
-                                this.board[i, j - 1] = this.board[i, j];
-                                this.board[i, j] = 0;
-                            }
-                        }
-                    }
-                }
-                else if (direction == Direction.Right)
-                {
-                    for (int j = 0; j < size - 1; j++)
-                    {
-                        for (int i = 0; i < size; i++)
-                        {
-                            if (this.board[i, j + 1] == this.board[i, j] && k == 0)
-                            {
-                                this.board[i, j + 1] = this.board[i, j + 1] * 2;
-                                this.board[i, j] = 0;
-                            }
-
-                            if (this.board[i, j + 1] == 0)
-                            {
-                                this.board[i, j + 1] = this.board[i, j];
-                                this.board[i, j] = 0;
-                            }
-                        }
-                    }
-                }
-            }
+            Up,
+            Down,
+            Left,
+            Right
         }
 
         public void UserInput(ConsoleKey key)
@@ -146,62 +62,157 @@
                 switch (key)
                 {
                     case ConsoleKey.UpArrow:
-                        this.Move(Direction.Up);
+                        Move(Direction.Up);
                         break;
 
                     case ConsoleKey.DownArrow:
-                        this.Move(Direction.Down); ;
+                        Move(Direction.Down);
                         break;
 
                     case ConsoleKey.LeftArrow:
-                        this.Move(Direction.Left);
+                        Move(Direction.Left);
                         break;
 
                     case ConsoleKey.RightArrow:
-                        this.Move(Direction.Right); ;
+                        Move(Direction.Right);
                         break;
                 }
 
-                this.AddRandom();
-                this.ConsoleUpdate();
+                AddRandom();
+                ConsoleUpdate();
             }
-            else if (key == ConsoleKey.Spacebar)
+            else
             {
-                this.auto = !this.auto;
+                if (key == ConsoleKey.Spacebar)
+                {
+                    auto = !auto;
+                }
+            }
+        }
+
+        private void Move(Direction direction)
+        {
+            for (var k = 0; k < size; k++)
+            {
+                switch (direction)
+                {
+                    case Direction.Up:
+                        for (var i = size - 1; i > 0; i--)
+                        {
+                            for (var j = 0; j < size; j++)
+                            {
+                                if (board[i - 1, j] == board[i, j] && k == 0)
+                                {
+                                    board[i - 1, j] = board[i - 1, j] * 2;
+                                    board[i, j] = 0;
+                                }
+
+                                if (board[i - 1, j] == 0)
+                                {
+                                    board[i - 1, j] = board[i, j];
+                                    board[i, j] = 0;
+                                }
+                            }
+                        }
+
+                        break;
+
+                    case Direction.Down:
+                        for (var i = 0; i < size - 1; i++)
+                        {
+                            for (var j = 0; j < size; j++)
+                            {
+                                if (board[i + 1, j] == board[i, j] && k == 0)
+                                {
+                                    board[i + 1, j] = board[i + 1, j] * 2;
+                                    board[i, j] = 0;
+                                }
+
+                                if (board[i + 1, j] == 0)
+                                {
+                                    board[i + 1, j] = board[i, j];
+                                    board[i, j] = 0;
+                                }
+                            }
+                        }
+
+                        break;
+
+                    case Direction.Left:
+                        for (var j = size - 1; j > 0; j--)
+                        {
+                            for (var i = 0; i < size; i++)
+                            {
+                                if (board[i, j - 1] == board[i, j] && k == 0)
+                                {
+                                    board[i, j - 1] = board[i, j - 1] * 2;
+                                    board[i, j] = 0;
+                                }
+
+                                if (board[i, j - 1] == 0)
+                                {
+                                    board[i, j - 1] = board[i, j];
+                                    board[i, j] = 0;
+                                }
+                            }
+                        }
+
+                        break;
+
+                    case Direction.Right:
+                        for (var j = 0; j < size - 1; j++)
+                        {
+                            for (var i = 0; i < size; i++)
+                            {
+                                if (board[i, j + 1] == board[i, j] && k == 0)
+                                {
+                                    board[i, j + 1] = board[i, j + 1] * 2;
+                                    board[i, j] = 0;
+                                }
+
+                                if (board[i, j + 1] == 0)
+                                {
+                                    board[i, j + 1] = board[i, j];
+                                    board[i, j] = 0;
+                                }
+                            }
+                        }
+
+                        break;
+                }
             }
         }
 
         private void AutoPlay()
         {
-            ;
-            IA IA = new IA(board);
-            ConsoleKey key = IA.returnBest();
+            var ia = new IA(board);
+            var key = ia.returnBest();
             UserInput(key);
         }
 
         private void AddRandom()
         {
             int randCol, randRow;
-            if (!this.CheckWin())
+            if (!CheckWin())
             {
-                if (this.CheckLose())
+                if (CheckLose())
                 {
-                    randCol = this.rnd.Next(0, size);
-                    randRow = this.rnd.Next(0, size);
-                    while (this.board[randCol, randRow] != 0)
+                    randCol = rnd.Next(0, size);
+                    randRow = rnd.Next(0, size);
+                    while (board[randCol, randRow] != 0)
                     {
-                        randCol = this.rnd.Next(0, size);
-                        randRow = this.rnd.Next(0, size);
+                        randCol = rnd.Next(0, size);
+                        randRow = rnd.Next(0, size);
                     }
 
-                    this.board[randCol, randRow] = 2;
+                    board[randCol, randRow] = 2;
                 }
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Lose.");
                     Console.ReadLine();
-                    this.board = new int[size, size];
+                    board = new int[size, size];
                 }
             }
             else
@@ -209,17 +220,17 @@
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Win.");
                 Console.ReadLine();
-                this.board = new int[size, size];
+                board = new int[size, size];
             }
         }
 
         private bool CheckWin()
         {
-            for (int i = 0; i < size; i++)
+            for (var i = 0; i < size; i++)
             {
-                for (int j = 0; j < size; j++)
+                for (var j = 0; j < size; j++)
                 {
-                    if (this.board[i, j] == winValue)
+                    if (board[i, j] == winValue)
                     {
                         return true;
                     }
@@ -231,11 +242,11 @@
 
         private bool CheckLose()
         {
-            for (int i = 0; i < size; i++)
+            for (var i = 0; i < size; i++)
             {
-                for (int j = 0; j < size; j++)
+                for (var j = 0; j < size; j++)
                 {
-                    if (this.board[i, j] == 0)
+                    if (board[i, j] == 0)
                     {
                         return true;
                     }
@@ -248,13 +259,13 @@
         private void ConsoleUpdate()
         {
             Console.Clear();
-            for (int i = 0; i != size; i++)
+            for (var i = 0; i != size; i++)
             {
-                for (int j = 0; j != size; j++)
+                for (var j = 0; j != size; j++)
                 {
-                    Console.SetCursorPosition(j * 4, i * 2);
-                    Console.ForegroundColor = this.colorInt[this.board[i, j]];
-                    Console.Write(this.board[i, j]);
+                    Console.SetCursorPosition(j * 5, i * 2);
+                    Console.ForegroundColor = colorInt[board[i, j]];
+                    Console.Write(board[i, j]);
                     Console.WriteLine();
                 }
             }

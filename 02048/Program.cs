@@ -4,9 +4,9 @@
 
     internal class Program
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
-            Game game = new Game();
+            var game = new Game();
             ConsoleKeyInfo keyInfo;
             while ((keyInfo = Console.ReadKey(true)).Key != ConsoleKey.Escape)
             {

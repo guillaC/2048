@@ -5,45 +5,49 @@
 
     internal class IA
     {
-        private int size = 4;
-        private int[,] IAboard;
-        private int bestScore = 0;
+        private readonly int size = 4;
+        private readonly int[,] IAboard;
+        private int bestScore;
         private Direction bestDirection;
-        private Dictionary<Direction, ConsoleKey> directionKey = new Dictionary<Direction, ConsoleKey>();
-        private Random rnd = new Random();
+        private readonly Dictionary<Direction, ConsoleKey> directionKey = new Dictionary<Direction, ConsoleKey>();
+        private readonly Random rnd = new Random();
 
         public IA(int[,] board)
         {
-            this.directionKey.Add(Direction.Up, ConsoleKey.UpArrow);
-            this.directionKey.Add(Direction.Down, ConsoleKey.DownArrow);
-            this.directionKey.Add(Direction.Left, ConsoleKey.LeftArrow);
-            this.directionKey.Add(Direction.Right, ConsoleKey.RightArrow);
+            directionKey.Add(Direction.Up, ConsoleKey.UpArrow);
+            directionKey.Add(Direction.Down, ConsoleKey.DownArrow);
+            directionKey.Add(Direction.Left, ConsoleKey.LeftArrow);
+            directionKey.Add(Direction.Right, ConsoleKey.RightArrow);
 
-            this.IAboard = board;
+            IAboard = board;
             foreach (Direction direction in Enum.GetValues(typeof(Direction)))
             {
-                this.GetBestMove(direction, this.IAboard);
+                GetBestMove(direction, IAboard);
             }
         }
 
         private enum Direction
         {
-            Up, Down, Left, Right, Rand
+            Up,
+            Down,
+            Left,
+            Right,
+            Rand
         };
 
         public ConsoleKey returnBest()
         {
-            if (this.bestDirection == Direction.Rand)
+            if (bestDirection == Direction.Rand)
             {
-                this.bestDirection = (Direction)this.rnd.Next(0, 4);
+                bestDirection = (Direction)rnd.Next(0, 4);
             }
-            System.Diagnostics.Debug.WriteLine(this.directionKey[this.bestDirection]);
-            return this.directionKey[this.bestDirection];
+            System.Diagnostics.Debug.WriteLine(directionKey[bestDirection]);
+            return directionKey[bestDirection];
         }
 
         private void GetBestMove(Direction direction, int[,] board)
         {
-            int score = 0;
+            var score = 0;
 
             if (direction == Direction.Rand)
             {
@@ -51,100 +55,103 @@
             }
             else
             {
-                for (int k = 0; k < size; k++)
+                for (var k = 0; k < size; k++)
                 {
-                    if (direction == Direction.Up)
+                    switch (direction)
                     {
-                        for (int i = size - 1; i > 0; i--)
-                        {
-                            for (int j = 0; j < size; j++)
+                        case Direction.Up:
+                            for (var i = size - 1; i > 0; i--)
                             {
-                                if (this.IAboard[i - 1, j] == this.IAboard[i, j] && k == 0)
+                                for (var j = 0; j < size; j++)
                                 {
-                                    this.IAboard[i - 1, j] = this.IAboard[i - 1, j] * 2;
-                                    score += this.IAboard[i - 1, j];
-                                    this.IAboard[i, j] = 0;
-                                }
+                                    if (IAboard[i - 1, j] == IAboard[i, j] && k == 0)
+                                    {
+                                        IAboard[i - 1, j] = IAboard[i - 1, j] * 2;
+                                        score += IAboard[i - 1, j];
+                                        IAboard[i, j] = 0;
+                                    }
 
-                                if (this.IAboard[i - 1, j] == 0)
-                                {
-                                    this.IAboard[i - 1, j] = this.IAboard[i, j];
-                                    this.IAboard[i, j] = 0;
+                                    if (IAboard[i - 1, j] == 0)
+                                    {
+                                        IAboard[i - 1, j] = IAboard[i, j];
+                                        IAboard[i, j] = 0;
+                                    }
                                 }
                             }
-                        }
-                    }
-                    else if (direction == Direction.Down)
-                    {
-                        for (int i = 0; i < size - 1; i++)
-                        {
-                            for (int j = 0; j < size; j++)
-                            {
-                                if (this.IAboard[i + 1, j] == this.IAboard[i, j] && k == 0)
-                                {
-                                    this.IAboard[i + 1, j] = this.IAboard[i + 1, j] * 2;
-                                    score += this.IAboard[i + 1, j];
-                                    this.IAboard[i, j] = 0;
-                                }
 
-                                if (this.IAboard[i + 1, j] == 0)
+                            break;
+                        case Direction.Down:
+                            for (var i = 0; i < size - 1; i++)
+                            {
+                                for (var j = 0; j < size; j++)
                                 {
-                                    this.IAboard[i + 1, j] = this.IAboard[i, j];
-                                    this.IAboard[i, j] = 0;
+                                    if (IAboard[i + 1, j] == IAboard[i, j] && k == 0)
+                                    {
+                                        IAboard[i + 1, j] = IAboard[i + 1, j] * 2;
+                                        score += IAboard[i + 1, j];
+                                        IAboard[i, j] = 0;
+                                    }
+
+                                    if (IAboard[i + 1, j] == 0)
+                                    {
+                                        IAboard[i + 1, j] = IAboard[i, j];
+                                        IAboard[i, j] = 0;
+                                    }
                                 }
                             }
-                        }
-                    }
-                    else if (direction == Direction.Left)
-                    {
-                        for (int j = size - 1; j > 0; j--)
-                        {
-                            for (int i = 0; i < size; i++)
-                            {
-                                if (this.IAboard[i, j - 1] == this.IAboard[i, j] && k == 0)
-                                {
-                                    this.IAboard[i, j - 1] = this.IAboard[i, j - 1] * 2;
-                                    score += this.IAboard[i, j - 1];
-                                    this.IAboard[i, j] = 0;
-                                }
 
-                                if (this.IAboard[i, j - 1] == 0)
+                            break;
+                        case Direction.Left:
+                            for (var j = size - 1; j > 0; j--)
+                            {
+                                for (var i = 0; i < size; i++)
                                 {
-                                    this.IAboard[i, j - 1] = this.IAboard[i, j];
-                                    this.IAboard[i, j] = 0;
+                                    if (IAboard[i, j - 1] == IAboard[i, j] && k == 0)
+                                    {
+                                        IAboard[i, j - 1] = IAboard[i, j - 1] * 2;
+                                        score += IAboard[i, j - 1];
+                                        IAboard[i, j] = 0;
+                                    }
+
+                                    if (IAboard[i, j - 1] == 0)
+                                    {
+                                        IAboard[i, j - 1] = IAboard[i, j];
+                                        IAboard[i, j] = 0;
+                                    }
                                 }
                             }
-                        }
-                    }
-                    else if (direction == Direction.Right)
-                    {
-                        for (int j = 0; j < size - 1; j++)
-                        {
-                            for (int i = 0; i < size; i++)
-                            {
-                                if (this.IAboard[i, j + 1] == this.IAboard[i, j] && k == 0)
-                                {
-                                    this.IAboard[i, j + 1] = this.IAboard[i, j + 1] * 2;
-                                    score += this.IAboard[i, j + 1];
-                                    this.IAboard[i, j] = 0;
-                                }
 
-                                if (this.IAboard[i, j + 1] == 0)
+                            break;
+                        case Direction.Right:
+                            for (var j = 0; j < size - 1; j++)
+                            {
+                                for (var i = 0; i < size; i++)
                                 {
-                                    this.IAboard[i, j + 1] = this.IAboard[i, j];
-                                    this.IAboard[i, j] = 0;
+                                    if (IAboard[i, j + 1] == IAboard[i, j] && k == 0)
+                                    {
+                                        IAboard[i, j + 1] = IAboard[i, j + 1] * 2;
+                                        score += IAboard[i, j + 1];
+                                        IAboard[i, j] = 0;
+                                    }
+
+                                    if (IAboard[i, j + 1] == 0)
+                                    {
+                                        IAboard[i, j + 1] = IAboard[i, j];
+                                        IAboard[i, j] = 0;
+                                    }
                                 }
                             }
-                        }
+
+                            break;
                     }
                 }
             }
             System.Diagnostics.Debug.WriteLine(direction + "->" + score);
 
-            if (this.bestScore < score)
+            if (bestScore < score)
             {
-                this.bestScore = score;
-                this.bestDirection = direction;
+                bestScore = score;
+                bestDirection = direction;
             }
         }
     }
